@@ -1,7 +1,7 @@
 import { getUserProfile } from '@/actions/getUserProfile';
 import { ParsedResume } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // Resume API service functions
 export interface ApiResume {
