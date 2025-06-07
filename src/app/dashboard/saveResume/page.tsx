@@ -447,7 +447,7 @@ export default function ResumePage() {
           <div className="text-center py-12 bg-[#1A2332] rounded-lg border border-gray-700">
             <p className="text-xl mb-4">No resumes found</p>
             <button 
-              onClick={() => router.push('/dashboard/resumeAnalysis/builder')}
+              onClick={() => router.push('/dashboard/resumeAnalysis/create')}
               className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition"
             >
               Create Your First Resume
