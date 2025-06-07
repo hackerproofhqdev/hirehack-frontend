@@ -2,16 +2,28 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Search, Loader2 } from "lucide-react"
+import { Search, Loader2, Lock, Crown } from "lucide-react"
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline"
+import { useRouter } from "next/navigation"
 
 import Header from "../../../components/JobSearchHeader"
 import JobFilters from "../../../components/JobFilters"
 import JobList from "../../../components/JobList"
 import Pagination from "../../../components/Pagination"
+import { getUserProfile } from "@/actions/getUserProfile"
 import type { Job, ApiResponse } from "@/types"
 
+interface UserProfile {
+  plain_period: string | null;
+  subscription_status: string;
+  username: string;
+  password: string;
+  email: string;
+  id: number;
+}
+
 export default function JobSearchPage() {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [jobType, setJobType] = useState("")
   const [datePosted, setDatePosted] = useState("")
@@ -23,9 +35,36 @@ export default function JobSearchPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasSearched, setHasSearched] = useState(false)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true)
+  const [hasAccess, setHasAccess] = useState(false)
 
   const jobsPerPage = 10
   const totalPages = Math.ceil(total / jobsPerPage)
+
+  // Check user subscription status
+  useEffect(() => {
+    const checkUserAccess = async () => {
+      try {
+        const profile = await getUserProfile()
+        setUserProfile(profile)
+        
+        // Check if user has free trial or active subscription
+        const hasValidSubscription = profile.subscription_status === 'active' || 
+                                    profile.subscription_status === 'trial' ||
+                                    profile.plain_period !== null
+        
+        setHasAccess(hasValidSubscription)
+      } catch (error) {
+        console.error('Error checking user profile:', error)
+        setHasAccess(false)
+      } finally {
+        setIsCheckingSubscription(false)
+      }
+    }
+
+    checkUserAccess()
+  }, [])
 
   const handleSearch = () => {
     // Validate search input
@@ -148,6 +187,79 @@ export default function JobSearchPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Show loading state while checking subscription
+  if (isCheckingSubscription) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-emerald-500" />
+          <p className="text-gray-400">Checking subscription status...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show paywall if user doesn't have access
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <Header />
+        <section className="relative pt-32 pb-24 overflow-hidden">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-800/50 rounded-2xl border border-gray-700 p-12"
+            >
+              <div className="mb-8">
+                <div className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Lock className="w-12 h-12 text-white" />
+                </div>
+                <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 text-transparent bg-clip-text">
+                  Premium Feature
+                </h1>
+                <p className="text-gray-400 text-lg mb-8">
+                  Job Search is available for users with active subscriptions or free trial access.
+                </p>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center justify-center gap-3 text-emerald-400">
+                  <Crown className="w-5 h-5" />
+                  <span>Search Jobs Worldwide</span>
+                </div>
+                <div className="flex items-center justify-center gap-3 text-emerald-400">
+                  <Crown className="w-5 h-5" />
+                  <span>Advanced Filtering Options</span>
+                </div>
+                <div className="flex items-center justify-center gap-3 text-emerald-400">
+                  <Crown className="w-5 h-5" />
+                  <span>Personalized Job Recommendations</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => router.push('/pricing')}
+                  className="px-8 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2"
+                >
+                  <Crown className="w-5 h-5" />
+                  Upgrade to Premium
+                </button>
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="px-8 py-3 rounded-lg border border-gray-600 hover:border-gray-500 transition-all"
+                >
+                  Back to Dashboard
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      </div>
+    )
   }
 
   return (

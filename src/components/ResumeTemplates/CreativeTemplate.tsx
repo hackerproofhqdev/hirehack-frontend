@@ -15,9 +15,9 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
           <h1 className="text-4xl font-bold mb-4">{resume.name}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="space-y-2">
-              {resume.email && <div className="flex items-center"><span className="mr-2">📧</span>{resume.email}</div>}
+              {resume.email && <div className="flex items-center"><span className="mr-2">📧</span><span className="break-all">{resume.email}</span></div>}
               {resume.phone_no && <div className="flex items-center"><span className="mr-2">📱</span>{resume.phone_no}</div>}
-              {resume.address && <div className="flex items-center"><span className="mr-2">📍</span>{resume.address}</div>}
+              {resume.address && <div className="flex items-center"><span className="mr-2">📍</span><span className="break-words">{resume.address}</span></div>}
             </div>
             <div className="space-y-2">
               {resume.linkedin_profile && <div className="flex items-center"><span className="mr-2">💼</span><span className="break-all">{resume.linkedin_profile}</span></div>}

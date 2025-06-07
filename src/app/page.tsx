@@ -397,78 +397,79 @@ const HomePage = () => {
       {/* Footer */}
       <footer className="bg-gray-900 border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 text-transparent bg-clip-text">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-1">
+              <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 text-transparent bg-clip-text">
                 HireHack
               </h3>
-              <p className="text-gray-400">
-                Securing the digital future, one step at a time.
+              <p className="text-gray-400 leading-relaxed">
+                Empowering careers with AI-driven insights and personalized job matching solutions.
               </p>
+              <div className="mt-6 flex space-x-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">H</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/about" className="hover:text-emerald-400 transition-colors">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/story" className="hover:text-emerald-400 transition-colors">
-                  Our Story
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/complaint" className="hover:text-emerald-400 transition-colors">
-                  Complaint
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Services</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/security-audit" className="hover:text-emerald-400 transition-colors">
-                    Security Audit
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/penetration-testing"  className="hover:text-emerald-400 transition-colors">
-                    Penetration Testing
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/consultation" className="hover:text-emerald-400 transition-colors">
-                    Consultation
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/privacy-policy" className="hover:text-emerald-400 transition-colors">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/terms"  className="hover:text-emerald-400 transition-colors">
-                    Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/cookie-policy" className="hover:text-emerald-400 transition-colors">
-                    Cookie Policy
-                  </Link>
-                </li>
-              </ul>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:col-span-2">
+              <div>
+                <h4 className="font-semibold text-lg mb-6 text-emerald-400">Company</h4>
+                <ul className="space-y-3">
+                  <li>
+                    <Link href="/about" className="text-gray-400 hover:text-emerald-400 transition-colors duration-200 flex items-center group">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/story" className="text-gray-400 hover:text-emerald-400 transition-colors duration-200 flex items-center group">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                      Our Story
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/pricing" className="text-gray-400 hover:text-emerald-400 transition-colors duration-200 flex items-center group">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                      Pricing
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-lg mb-6 text-emerald-400">Legal</h4>
+                <ul className="space-y-3">
+                  <li>
+                    <Link href="/privacy-policy" className="text-gray-400 hover:text-emerald-400 transition-colors duration-200 flex items-center group">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/terms" className="text-gray-400 hover:text-emerald-400 transition-colors duration-200 flex items-center group">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/cookie-policy" className="text-gray-400 hover:text-emerald-400 transition-colors duration-200 flex items-center group">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+                      Cookie Policy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p>&copy; 2024 HackerProof HQ. All rights reserved.</p>
+          <div className="mt-12 pt-8 border-t border-gray-800">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <p className="text-gray-400 text-center md:text-left">
+                &copy; 2024 HireHack. All rights reserved.
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-6 h-6 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full animate-pulse"></div>
+                <span className="text-gray-400 text-sm">Powered by HackerProof</span>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

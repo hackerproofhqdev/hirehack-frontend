@@ -2,6 +2,7 @@
 
 import { createPaymentSession } from "@/actions/paymentActions"
 import { useState } from "react"
+import { getUserProfile } from "@/actions/getUserProfile"
 
 
 type Interval = "DAY" | "WEEK" | "MONTH" | "YEAR"
@@ -17,7 +18,8 @@ export function usePayment() {
         setInterval(subsinterval)
         async function getPaymentUrl() {
             // @ts-ignore
-            const url = await createPaymentSession(payAmount , subsinterval)
+            const userProfile = await getUserProfile()
+            const url = await createPaymentSession(payAmount , subsinterval , userProfile.email)
             setPaymentUrl(url)
         }
         getPaymentUrl()

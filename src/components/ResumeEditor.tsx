@@ -120,7 +120,9 @@ export function ResumeEditor({
         }
       )
       const responseData = response as any
-      setAiSummary(responseData.generated_summary)
+      const generatedSummary = responseData.generated_summary
+      setAiSummary(generatedSummary)
+      return generatedSummary
     } catch (error) {
       console.error('Error generating summary:', error)
       throw error
@@ -196,10 +198,10 @@ export function ResumeEditor({
     if (!jobDescription) return
     
     try {
-      await generateSummary(jobDescription)
+      const generatedSummary = await generateSummary(jobDescription)
       setShowAiDialog(false)
-      if (aiSummary) {
-        setEditedResume({...editedResume, summary: aiSummary})
+      if (generatedSummary) {
+        setEditedResume({...editedResume, summary: generatedSummary})
       }
     } catch (error) {
       toast({

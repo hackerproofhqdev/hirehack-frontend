@@ -24,7 +24,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
             {resume.email && (
               <div className="flex items-center">
                 <span className="w-4 h-4 bg-blue-500 rounded-full mr-3"></span>
-                <span>{resume.email}</span>
+                <span className="break-all">{resume.email}</span>
               </div>
             )}
             {resume.phone_no && (
@@ -36,7 +36,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
             {resume.address && (
               <div className="flex items-center">
                 <span className="w-4 h-4 bg-blue-500 rounded-full mr-3"></span>
-                <span>{resume.address}</span>
+                <span className="break-words">{resume.address}</span>
               </div>
             )}
             {resume.linkedin_profile && (

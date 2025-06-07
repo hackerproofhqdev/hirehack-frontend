@@ -12,11 +12,11 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
         <h1 className="text-4xl font-bold mb-4">{resume.name}</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="space-y-2">
-            {resume.email && <div>Email: {resume.email}</div>}
+            {resume.email && <div className="break-all">Email: {resume.email}</div>}
             {resume.phone_no && <div>Phone: {resume.phone_no}</div>}
           </div>
           <div className="space-y-2">
-            {resume.address && <div>Address: {resume.address}</div>}
+            {resume.address && <div className="break-words">Address: {resume.address}</div>}
           </div>
           <div className="space-y-2">
             {resume.linkedin_profile && <div className="break-all">LinkedIn: {resume.linkedin_profile}</div>}

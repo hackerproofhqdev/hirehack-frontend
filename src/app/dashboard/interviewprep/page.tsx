@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Users, Phone, PhoneOff } from 'lucide-react';
+import { Mic, Users, Phone, PhoneOff, Lock, Crown, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { getUserProfile } from '@/actions/getUserProfile';
 import Vapi from "@vapi-ai/web";
 import AIInterviewerHeader from '@/components/AIInterviewerHeader';
@@ -30,6 +31,7 @@ const CALL_STATUS = {
 };
 
 export default function InterviewChat() {
+  const router = useRouter()
   const [jobRole, setJobRole] = useState('');
   const [jobDesc, setJobDesc] = useState('');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -38,6 +40,8 @@ export default function InterviewChat() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [lastMessage, setLastMessage] = useState<string>("");
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
 
   const vapiRef = useRef<any>(null);
 
@@ -46,8 +50,18 @@ export default function InterviewChat() {
       try {
         const profile = await getUserProfile();
         setUserProfile(profile);
+        
+        // Check if user has free trial or active subscription
+        const hasValidSubscription = profile.subscription_status === 'active' || 
+                                    profile.subscription_status === 'trial' ||
+                                    profile.plain_period !== null;
+        
+        setHasAccess(hasValidSubscription);
       } catch (error) {
         console.error('User data error:', error);
+        setHasAccess(false);
+      } finally {
+        setIsCheckingSubscription(false);
       }
     };
     loadUserData();
@@ -134,6 +148,77 @@ export default function InterviewChat() {
       setCallStatus(CALL_STATUS.INACTIVE);
     }
   };
+
+  // Show loading state while checking subscription
+  if (isCheckingSubscription) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-emerald-500" />
+          <p className="text-gray-400">Checking subscription status...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show paywall if user doesn't have access
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <AIInterviewerHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+        <div className="max-w-4xl mx-auto px-4 py-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gray-800/50 rounded-2xl border border-gray-700 p-12 text-center"
+          >
+            <div className="mb-8">
+              <div className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Lock className="w-12 h-12 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-400 to-teal-400 text-transparent bg-clip-text">
+                Premium Feature
+              </h1>
+              <p className="text-gray-400 text-lg mb-8">
+                AI Interview Preparation is available for users with active subscriptions or free trial access.
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center justify-center gap-3 text-emerald-400">
+                <Crown className="w-5 h-5" />
+                <span>AI-Powered Voice Interviews</span>
+              </div>
+              <div className="flex items-center justify-center gap-3 text-emerald-400">
+                <Crown className="w-5 h-5" />
+                <span>Real-time Feedback & Analysis</span>
+              </div>
+              <div className="flex items-center justify-center gap-3 text-emerald-400">
+                <Crown className="w-5 h-5" />
+                <span>Personalized Interview Questions</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => router.push('/pricing')}
+                className="px-8 py-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 transition-all flex items-center justify-center gap-2"
+              >
+                <Crown className="w-5 h-5" />
+                Upgrade to Premium
+              </button>
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="px-8 py-3 rounded-lg border border-gray-600 hover:border-gray-500 transition-all"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">

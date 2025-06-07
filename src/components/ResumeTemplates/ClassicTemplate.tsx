@@ -10,17 +10,17 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
       {/* Header */}
       <div className="text-center border-b-2 border-gray-800 pb-4 mb-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">{resume.name}</h1>
-        <div className="flex justify-center items-center gap-4 text-sm text-gray-600">
-          {resume.email && <span>{resume.email}</span>}
+        <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-gray-600">
+          {resume.email && <span className="break-all">{resume.email}</span>}
           {resume.phone_no && <span>•</span>}
           {resume.phone_no && <span>{resume.phone_no}</span>}
           {resume.address && <span>•</span>}
-          {resume.address && <span>{resume.address}</span>}
+          {resume.address && <span className="break-words">{resume.address}</span>}
         </div>
-        <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-1">
-          {resume.linkedin_profile && <span>{resume.linkedin_profile}</span>}
+        <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-gray-600 mt-1">
+          {resume.linkedin_profile && <span className="break-all">{resume.linkedin_profile}</span>}
           {resume.github_profile && resume.linkedin_profile && <span>•</span>}
-          {resume.github_profile && <span>{resume.github_profile}</span>}
+          {resume.github_profile && <span className="break-all">{resume.github_profile}</span>}
         </div>
       </div>
 
