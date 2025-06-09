@@ -12,6 +12,9 @@ import { useToast } from "@/hooks/use-toast"
 import { Client } from '@langchain/langgraph-sdk'
 import AIResumeHeader from '@/components/AIResumeHeader'
 import { TemplateType } from '@/components/TemplateSelector'
+import { Download, Loader2 } from 'lucide-react'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 export default function Resume() {
   const [loading, setLoading] = useState(false)
@@ -40,6 +43,7 @@ export default function Resume() {
   const [expGenDialog, setExpGenDialog] = useState(false)
   const [expGenLoading, setExpGenLoading] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>('classic')
+  const [isDownloading, setIsDownloading] = useState(false)
 
   const handleAiImprove = async (
     type: 'summary' | 'bullet' | 'role', 
@@ -163,6 +167,82 @@ export default function Resume() {
     }
   }
 
+  const handleDownloadPDF = async () => {
+    if (!resumePreviewRef.current) {
+      toast({
+        title: "Error",
+        description: "Resume preview not available for download",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsDownloading(true)
+    
+    try {
+      // Get the resume container
+      const resumeElement = resumePreviewRef.current
+      
+      // Create canvas from the resume element
+      const canvas = await html2canvas(resumeElement, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: resumeElement.scrollWidth,
+        height: resumeElement.scrollHeight,
+        windowWidth: resumeElement.scrollWidth,
+        windowHeight: resumeElement.scrollHeight
+      })
+
+      // Calculate dimensions for A4 page
+      const imgWidth = 210 // A4 width in mm
+      const pageHeight = 297 // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width
+      
+      // Create PDF
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgData = canvas.toDataURL('image/png')
+      
+      let heightLeft = imgHeight
+      let position = 0
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+
+      // Add additional pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight
+        pdf.addPage()
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        heightLeft -= pageHeight
+      }
+
+      // Generate filename
+      const fileName = editedResume?.name 
+        ? `${editedResume.name.replace(/[^a-zA-Z0-9]/g, '_')}_Resume.pdf`
+        : `Resume_${selectedTemplate}_${new Date().getTime()}.pdf`
+
+      // Download the PDF
+      pdf.save(fileName)
+
+      toast({
+        title: "Success",
+        description: "Resume downloaded successfully",
+      })
+    } catch (error) {
+      console.error("Error downloading resume:", error)
+      toast({
+        title: "Error",
+        description: "Failed to download resume. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsDownloading(false)
+    }
+  }
+
   return (
     <div className="h-screen overflow-hidden bg-gray-900 text-white">
       <style jsx global>{`
@@ -223,8 +303,27 @@ export default function Resume() {
           {/* Preview Panel */}
           <div className="h-full overflow-y-auto bg-[#1A2332] border border-gray-700 rounded-lg scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-emerald-500">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-emerald-400 mb-4">Live Preview</h3>
-              <div className="bg-white rounded-lg p-4">
+              <div className="sticky top-0 bg-[#1A2332] z-10 pb-4 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-emerald-400">Live Preview</h3>
+                <button
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloading}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-600 disabled:opacity-50 text-white rounded-lg transition-all"
+                >
+                  {isDownloading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4" />
+                      Download PDF
+                    </>
+                  )}
+                </button>
+              </div>
+              <div ref={resumePreviewRef} className="bg-white rounded-lg p-4">
                 <ResumeViewer
                   resume={editedResume}
                   selectedTemplate={selectedTemplate}

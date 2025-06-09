@@ -57,12 +57,12 @@ const UserHome = () => {
       icon: <Save className="w-6 h-6" />,
       link: "/dashboard/saveResume",
     },
-    // {
-    //   title: "Complaint Portal",
-    //   description: "Complaint Any Issue To the Service team To review By Hirehack service team",
-    //   icon: <FileText className="w-6 h-6" />,
-    //   link: "/complaint",
-    // },
+    {
+      title: "Complaint Portal",
+      description: "Complaint Any Issue To the Service team To review By Hirehack service team",
+      icon: <FileText className="w-6 h-6" />,
+      link: "/dashboard/complaint",
+    },
   ];
 
   return (

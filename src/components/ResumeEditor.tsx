@@ -84,6 +84,8 @@ export function ResumeEditor({
   const [isImprovingExp, setIsImprovingExp] = useState(false)
   const [showSavedResumesDialog, setShowSavedResumesDialog] = useState(false)
   const [savedResumes, setSavedResumes] = useState<any[]>([])
+  const [isSaving, setIsSaving] = useState(false)
+  const [isLoadingSavedResumes, setIsLoadingSavedResumes] = useState(false)
   
   const improveExperience = async (jobDescription: string) => {
     const client = new Client({
@@ -150,6 +152,7 @@ export function ResumeEditor({
 
   const handleSaveResume = async () => {
     try {
+      setIsSaving(true)
       const resumeName = editedResume.name || 'Untitled Resume'
       
       // Save to database using API
@@ -170,6 +173,8 @@ export function ResumeEditor({
         description: "Failed to save resume. Please try again.",
         variant: "destructive"
       })
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -601,22 +606,51 @@ export function ResumeEditor({
           <Button 
             size="sm"
             onClick={handleSaveResume}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            disabled={isSaving}
+            className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600 disabled:opacity-50 text-white"
           >
-            <Save className="h-4 w-4 mr-2" />
-            Save Resume
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Resume
+              </>
+            )}
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={async () => {
-              const resumes = await getSavedResumes()
-              setSavedResumes(resumes)
-              setShowSavedResumesDialog(true)
+              setIsLoadingSavedResumes(true)
+              try {
+                const resumes = await getSavedResumes()
+                setSavedResumes(resumes)
+                setShowSavedResumesDialog(true)
+              } catch (error) {
+                toast({
+                  title: "Error",
+                  description: "Failed to load saved resumes. Please try again.",
+                  variant: "destructive"
+                })
+              } finally {
+                setIsLoadingSavedResumes(false)
+              }
             }}
-            className="border-gray-600 text-gray-300 hover:bg-gray-700"
+            disabled={isLoadingSavedResumes}
+            className="border-gray-600 text-gray-300 hover:bg-gray-700 disabled:opacity-50"
           >
-            View Saved
+            {isLoadingSavedResumes ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              'View Saved'
+            )}
           </Button>
         </div>
       </div>
@@ -1141,7 +1175,12 @@ export function ResumeEditor({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4 max-h-[400px] overflow-y-auto">
-            {savedResumes.length === 0 ? (
+            {isLoadingSavedResumes ? (
+              <div className="text-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-emerald-500" />
+                <p className="text-gray-500">Loading saved resumes...</p>
+              </div>
+            ) : savedResumes.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p>No saved resumes found.</p>
                 <p className="text-sm mt-2">Save a resume to see it here.</p>
