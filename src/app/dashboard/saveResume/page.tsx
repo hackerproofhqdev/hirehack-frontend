@@ -16,8 +16,15 @@ import {
   SortAsc,
   Download,
   Palette,
-  Loader2
+  Loader2,
+  Brain,
+  LogOut,
+  Menu,
+  X
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { logout } from "@/actions/logout";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 // Legacy format imports - removed as they're not available in current project structure
@@ -35,6 +42,132 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+
+// Navbar component for Save Resume page
+const SaveResumeNavbar = () => {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
+  return (
+    <header className="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700 relative text-white">
+      <Link href={'/dashboard'}>
+        <div className="text-xl flex gap-2 items-center font-bold text-teal-400">
+          <Brain className="w-6 h-6" />
+          HireHack
+        </div>
+      </Link>
+
+      <div className="hidden md:flex items-center gap-4">
+        <Link
+          href={"/dashboard/resumeAnalysis"}
+          className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          Resume Analyzer
+        </Link>
+        <Link
+          href={"/dashboard/jobSearch"}
+          className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          Job Search
+        </Link>
+        <Link
+          href={"/dashboard/interviewprep"}
+          className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          Interview Prep
+        </Link>
+        <Link
+          href={"/dashboard/quiz"}
+          className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          Quiz Generation
+        </Link>
+        <Link
+          href={"/dashboard/userProfile"}
+          className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          User Profile
+        </Link>
+        <button
+          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          onClick={() => logout()}
+        >
+          <LogOut className="w-5 h-5 text-gray-300" />
+        </button>
+      </div>
+
+      <div className="md:hidden flex items-center">
+        <motion.button
+          onClick={() => setIsNavOpen(!isNavOpen)}
+          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          {isNavOpen ? (
+            <X className="w-6 h-6 text-white" />
+          ) : (
+            <Menu className="w-6 h-6 text-white" />
+          )}
+        </motion.button>
+      </div>
+
+      <AnimatePresence>
+        {isNavOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-full left-0 right-0 bg-gray-800 border-b border-gray-700 z-50 md:hidden"
+          >
+            <div className="flex flex-col gap-2 p-4">
+              <Link
+                href={"/dashboard/resumeAnalysis"}
+                onClick={() => setIsNavOpen(false)}
+                className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Resume Analyzer
+              </Link>
+              <Link
+                href={"/dashboard/jobSearch"}
+                onClick={() => setIsNavOpen(false)}
+                className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Job Search
+              </Link>
+              <Link
+                href={"/dashboard/interviewprep"}
+                onClick={() => setIsNavOpen(false)}
+                className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Interview Prep
+              </Link>
+              <Link
+                href={"/dashboard/quiz"}
+                onClick={() => setIsNavOpen(false)}
+                className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                Quiz Generation
+              </Link>
+              <Link
+                href={"/dashboard/userProfile"}
+                onClick={() => setIsNavOpen(false)}
+                className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                User Profile
+              </Link>
+              <button
+                onClick={() => {
+                  setIsNavOpen(false)
+                  logout()
+                }}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <LogOut className="w-5 h-5 text-gray-300" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+};
 
 export default function ResumePage() {
   const router = useRouter();
@@ -81,7 +214,7 @@ export default function ResumePage() {
   }, []);
 
   const handleBack = () => setSelectedResume(null);
-  const handleDashboardReturn = () => router.push('/dashboard/resumeAnalysis');
+  const handleDashboardReturn = () => router.push('/dashboard');
 
   // Filter all resumes (both database and local)
   const filteredResumes = resumes.filter((resume: any) => 
@@ -265,53 +398,53 @@ export default function ResumePage() {
   };
 
   const renderResumeActions = (resume: any) => (
-    <div className="flex gap-2">
+    <div className="flex gap-1 sm:gap-2 flex-wrap">
       <button 
         onClick={() => setSelectedResume(resume)} 
-        className="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition"
+        className="p-1.5 sm:p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition"
         title="View"
       >
-        <Eye size={20} />
+        <Eye size={16} className="sm:w-5 sm:h-5" />
       </button>
       <button 
         onClick={() => handleDownloadResume(resume)} 
         disabled={isDownloading === resume.id?.toString()}
-        className="p-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-600 disabled:opacity-50 rounded-lg transition"
+        className="p-1.5 sm:p-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-600 disabled:opacity-50 rounded-lg transition"
         title="Download PDF"
       >
         {isDownloading === resume.id?.toString() ? (
-          <Loader2 size={20} className="animate-spin" />
+          <Loader2 size={16} className="sm:w-5 sm:h-5 animate-spin" />
         ) : (
-          <Download size={20} />
+          <Download size={16} className="sm:w-5 sm:h-5" />
         )}
       </button>
       <button 
         onClick={() => handleLoadInEditor(resume)} 
-        className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition"
+        className="p-1.5 sm:p-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition"
         title="Load in Editor"
       >
-        <Edit size={20} />
+        <Edit size={16} className="sm:w-5 sm:h-5" />
       </button>
       <button 
         onClick={() => handleChangeTemplate(resume)} 
-        className="p-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition"
+        className="p-1.5 sm:p-2 bg-purple-500 hover:bg-purple-600 rounded-lg transition"
         title="Change Template"
       >
-        <Palette size={20} />
+        <Palette size={16} className="sm:w-5 sm:h-5" />
       </button>
       <button 
         onClick={() => startRenaming(resume)} 
-        className="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition"
+        className="p-1.5 sm:p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition"
         title="Rename"
       >
-        <Edit size={20} />
+        <Edit size={16} className="sm:w-5 sm:h-5" />
       </button>
       <button 
         onClick={() => handleDelete(resume.id)} 
-        className="p-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
+        className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
         title="Delete"
       >
-        <Trash2 size={20} />
+        <Trash2 size={16} className="sm:w-5 sm:h-5" />
       </button>
     </div>
   );
@@ -326,20 +459,20 @@ export default function ResumePage() {
             onChange={(e) => setNewTitle(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleRename(resume.id?.toString() || '')}
             onBlur={() => handleRename(resume.id?.toString() || '')}
-            className="px-2 py-1 bg-[#2A3447] border border-gray-600 rounded text-white w-full"
+            className="px-2 py-1 bg-[#2A3447] border border-gray-600 rounded text-white w-full text-sm sm:text-base"
             autoFocus
           />
         </div>
       );
     }
     return (
-      <div className="flex items-center gap-2">
-        <h2 className="text-xl font-semibold text-emerald-400">
+      <div className="flex items-center gap-2 mb-1">
+        <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-emerald-400 truncate">
           {resume.title || "Untitled Resume"}
         </h2>
 
         {resume.template && (
-          <span className="text-xs bg-purple-500 text-white px-2 py-1 rounded capitalize">
+          <span className="text-xs bg-purple-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded capitalize shrink-0">
             {resume.template}
           </span>
         )}
@@ -374,191 +507,201 @@ export default function ResumePage() {
 
     // Handle local resumes with template-based rendering
     return (
-      <div className={wrapperClass}>
-        <button
-          onClick={handleBack}
-          className="mb-4 flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
-        >
-          <ArrowLeft size={20} />
-          Back to Resumes
-        </button>
-        <ResumeViewer 
-          resume={selectedResume.resume}
-          selectedTemplate={selectedResume.template || 'classic'}
-        />
-      </div>
+      <>
+        <SaveResumeNavbar />
+        <div className={wrapperClass}>
+          <button
+            onClick={handleBack}
+            className="mb-4 flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Resumes
+          </button>
+          <ResumeViewer 
+            resume={selectedResume.resume}
+            selectedTemplate={selectedResume.template || 'classic'}
+          />
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0F1729] text-gray-300 p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <div className="flex items-center">
-            <button 
-              onClick={handleDashboardReturn}
-              className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors mr-8"
-            >
-              <ArrowLeft size={24} />
-              <span className="hidden sm:inline">Back to Dashboard</span>
-            </button>
-            <h1 className="text-2xl sm:text-4xl font-bold text-emerald-400">My Resumes</h1>
-          </div>
-          <button 
-            onClick={() => router.push('/dashboard/resumeAnalysis/create')}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-all transform hover:scale-105"
-          >
-            <Plus size={20} />
-            Create New Resume
-          </button>
-        </div>
-
-        {/* Search and Filter Bar */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-grow">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search resumes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#1A2332] border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-[#1A2332] text-gray-400 hover:bg-gray-700'}`}
-            >
-              <Grid size={20} />
-            </button>
-            <button 
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-[#1A2332] text-gray-400 hover:bg-gray-700'}`}
-            >
-              <List size={20} />
-            </button>
-          </div>
-        </div>
-
-        {/* Resumes Grid/List */}
-        {filteredResumes.length === 0 ? (
-          <div className="text-center py-12 bg-[#1A2332] rounded-lg border border-gray-700">
-            <p className="text-xl mb-4">No resumes found</p>
+    <>
+      <SaveResumeNavbar />
+      <div className="min-h-screen bg-[#0F1729] text-gray-300 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+            <div className="flex items-center w-full sm:w-auto">
+              <button 
+                onClick={handleDashboardReturn}
+                className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors mr-4 sm:mr-8"
+              >
+                <ArrowLeft size={20} />
+                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="sm:hidden">Back</span>
+              </button>
+              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-emerald-400">My Resumes</h1>
+            </div>
             <button 
               onClick={() => router.push('/dashboard/resumeAnalysis/create')}
-              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition"
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-all transform hover:scale-105 w-full sm:w-auto text-sm sm:text-base"
             >
-              Create Your First Resume
+              <Plus size={16} className="sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Create New Resume</span>
+              <span className="sm:hidden">Create Resume</span>
             </button>
           </div>
-        ) : (
-          <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
-            {filteredResumes.map((resume) => (
-              <div
-                key={resume.id}
-                className={`${
-                  viewMode === 'grid' 
-                    ? 'bg-[#1A2332] border border-gray-700 rounded-lg p-6 transition-all transform hover:-translate-y-1 hover:shadow-xl' 
-                    : 'bg-[#1A2332] border border-gray-700 rounded-lg p-4 flex items-center gap-4'
-                }`}
-                onMouseEnter={() => setIsHovered(resume.id?.toString() || '')}
-                onMouseLeave={() => setIsHovered(null)}
-              >
-                {viewMode === 'grid' ? (
-                  <>
-                    <div className="relative w-full h-48 mb-4 group">
-                      <Image
-                        src="/1.webp"
-                        alt="Resume Preview"
-                        fill
-                        className="object-cover rounded-lg"
-                      />
-                      {isHovered === resume.id?.toString() && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center gap-4">
-                          {renderResumeActions(resume)}
-                        </div>
-                      )}
-                    </div>
-                    {renderResumeTitle(resume)}
-                    <div className="flex items-center gap-2 text-gray-400 mt-2">
-                      <Calendar size={16} />
-                      <span>{new Date().toLocaleDateString()}</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="relative w-20 h-20 flex-shrink-0">
-                      <Image
-                        src="/1.webp"
-                        alt="Resume Preview"
-                        fill
-                        className="object-cover rounded-lg"
-                      />
-                    </div>
-                    <div className="flex-grow">
-                      {renderResumeTitle(resume)}
-                      <div className="flex items-center gap-2 text-gray-400 mt-1">
-                        <Calendar size={16} />
-                        <span>{new Date().toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    {renderResumeActions(resume)}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
 
-        {/* Hidden download container */}
-        {downloadResume && (
-          <div 
-            ref={downloadRef}
-            className="fixed -top-[9999px] -left-[9999px] w-[210mm] bg-white p-8 font-sans"
-            style={{ fontFamily: 'Arial, sans-serif' }}
-          >
-            <ResumeViewer 
-              resume={downloadResume.resume}
-              selectedTemplate={downloadResume.template || 'classic'}
-            />
-          </div>
-        )}
-
-        {/* Template Change Dialog */}
-        <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
-          <DialogContent className="max-w-4xl bg-[#1A2332] border-gray-700">
-            <DialogHeader>
-              <DialogTitle className="text-emerald-400">Change Template</DialogTitle>
-              <DialogDescription className="text-gray-300">
-                Select a new template for "{selectedResumeForTemplate?.title}"
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-4">
-              <TemplateSelector
-                selectedTemplate={selectedTemplate}
-                onTemplateChange={setSelectedTemplate}
+          {/* Search and Filter Bar */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search resumes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 bg-[#1A2332] border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors text-sm sm:text-base"
               />
             </div>
-            <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowTemplateDialog(false)}
-                className="border-gray-600 text-gray-300 hover:bg-gray-700"
+            <div className="flex gap-2 justify-center sm:justify-start">
+              <button 
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-emerald-500 text-white' : 'bg-[#1A2332] text-gray-400 hover:bg-gray-700'}`}
               >
-                Cancel
-              </Button>
-              <Button 
-                onClick={updateTemplate}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                <Grid size={18} />
+              </button>
+              <button 
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-emerald-500 text-white' : 'bg-[#1A2332] text-gray-400 hover:bg-gray-700'}`}
               >
-                Update Template
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                <List size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Resumes Grid/List */}
+          {filteredResumes.length === 0 ? (
+            <div className="text-center py-8 sm:py-12 bg-[#1A2332] rounded-lg border border-gray-700">
+              <p className="text-lg sm:text-xl mb-4">No resumes found</p>
+              <button 
+                onClick={() => router.push('/dashboard/resumeAnalysis/create')}
+                className="px-4 sm:px-6 py-2 sm:py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition text-sm sm:text-base"
+              >
+                Create Your First Resume
+              </button>
+            </div>
+          ) : (
+            <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6' : 'space-y-3 sm:space-y-4'}`}>
+              {filteredResumes.map((resume) => (
+                <div
+                  key={resume.id}
+                  className={`${
+                    viewMode === 'grid' 
+                      ? 'bg-[#1A2332] border border-gray-700 rounded-lg p-4 sm:p-6 transition-all transform hover:-translate-y-1 hover:shadow-xl' 
+                      : 'bg-[#1A2332] border border-gray-700 rounded-lg p-3 sm:p-4 flex items-center gap-3 sm:gap-4'
+                  }`}
+                  onMouseEnter={() => setIsHovered(resume.id?.toString() || '')}
+                  onMouseLeave={() => setIsHovered(null)}
+                >
+                  {viewMode === 'grid' ? (
+                    <>
+                      <div className="relative w-full h-32 sm:h-48 mb-3 sm:mb-4 group">
+                        <Image
+                          src="/1.webp"
+                          alt="Resume Preview"
+                          fill
+                          className="object-cover rounded-lg"
+                        />
+                        {(isHovered === resume.id?.toString() || window.innerWidth < 640) && (
+                          <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center gap-2 sm:gap-4">
+                            {renderResumeActions(resume)}
+                          </div>
+                        )}
+                      </div>
+                      {renderResumeTitle(resume)}
+                      <div className="flex items-center gap-2 text-gray-400 mt-2 text-sm">
+                        <Calendar size={14} />
+                        <span>{new Date().toLocaleDateString()}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+                        <Image
+                          src="/1.webp"
+                          alt="Resume Preview"
+                          fill
+                          className="object-cover rounded-lg"
+                        />
+                      </div>
+                      <div className="flex-grow min-w-0">
+                        {renderResumeTitle(resume)}
+                        <div className="flex items-center gap-2 text-gray-400 mt-1 text-xs sm:text-sm">
+                          <Calendar size={12} className="sm:w-4 sm:h-4" />
+                          <span>{new Date().toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {renderResumeActions(resume)}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Hidden download container */}
+          {downloadResume && (
+            <div 
+              ref={downloadRef}
+              className="fixed -top-[9999px] -left-[9999px] w-[210mm] bg-white p-8 font-sans"
+              style={{ fontFamily: 'Arial, sans-serif' }}
+            >
+              <ResumeViewer 
+                resume={downloadResume.resume}
+                selectedTemplate={downloadResume.template || 'classic'}
+              />
+            </div>
+          )}
+
+          {/* Template Change Dialog */}
+          <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+            <DialogContent className="max-w-4xl bg-[#1A2332] border-gray-700">
+              <DialogHeader>
+                <DialogTitle className="text-emerald-400">Change Template</DialogTitle>
+                <DialogDescription className="text-gray-300">
+                  Select a new template for "{selectedResumeForTemplate?.title}"
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4">
+                <TemplateSelector
+                  selectedTemplate={selectedTemplate}
+                  onTemplateChange={setSelectedTemplate}
+                />
+              </div>
+              <DialogFooter>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowTemplateDialog(false)}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={updateTemplate}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                >
+                  Update Template
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

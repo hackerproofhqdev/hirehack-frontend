@@ -170,6 +170,110 @@ export default function UserProfilePage() {
           />
         </div>
 
+        {/* Billing Invoice Section */}
+        {user.subscription_status === 'premium' && (
+          <div className="mb-12">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 border border-gray-700 rounded-xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <CreditCard className="w-8 h-8 text-emerald-400" />
+                <h2 className="text-2xl font-bold text-white">Billing Invoice</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Subscription Details */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-emerald-400">Current Plan</h3>
+                  <div className="bg-gray-800/50 rounded-lg p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-gray-300">Plan Type</span>
+                      <span className="font-semibold text-white capitalize">
+                        {user.plain_period === 'monthly' ? 'Monthly Premium' : 'Yearly Premium'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-gray-300">Amount</span>
+                      <span className="text-2xl font-bold text-emerald-400">
+                        ${user.plain_period === 'monthly' ? '9.00' : '97.00'}
+                        <span className="text-sm text-gray-400 ml-1">
+                          {user.plain_period === 'monthly' ? '/month' : '/year'}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-gray-300">Auto-Renewal</span>
+                      <span className="flex items-center gap-2 text-emerald-400">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                        Active
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Next Billing</span>
+                      <span className="text-white">
+                        {new Date(Date.now() + (user.plain_period === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Auto-Renewal Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-emerald-400">Auto-Renewal Details</h3>
+                  <div className="bg-gray-800/50 rounded-lg p-6">
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                      <div>
+                        <p className="text-white font-medium mb-1">Automatic Billing</p>
+                        <p className="text-gray-400 text-sm">
+                          Your subscription will automatically renew every {user.plain_period === 'monthly' ? 'month' : 'year'} 
+                          for ${user.plain_period === 'monthly' ? '9.00' : '97.00'}.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                      <div>
+                        <p className="text-white font-medium mb-1">Payment Method</p>
+                        <p className="text-gray-400 text-sm">
+                          Charges will be automatically processed using your default payment method.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2"></div>
+                      <div>
+                        <p className="text-white font-medium mb-1">Cancellation</p>
+                        <p className="text-gray-400 text-sm">
+                          You can cancel anytime before your next billing cycle to avoid future charges.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Invoice Summary */}
+              <div className="mt-8 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-lg p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-semibold text-emerald-400">Current Invoice</h4>
+                    <p className="text-gray-400 text-sm">
+                      Next charge: {new Date(Date.now() + (user.plain_period === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-bold text-white">
+                      ${user.plain_period === 'monthly' ? '9.00' : '97.00'}
+                    </p>
+                    <p className="text-emerald-400 text-sm">
+                      Auto-renewal {user.plain_period === 'monthly' ? 'monthly' : 'yearly'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <button
             onClick={() => router.push("/dashboard/saveResume")}

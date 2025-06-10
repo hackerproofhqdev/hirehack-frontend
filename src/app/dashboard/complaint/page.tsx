@@ -218,20 +218,20 @@ const ComplaintDashboard = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       <DashboardNavbar />
 
-      <main className="p-8">
+      <main className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-transparent bg-clip-text">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-transparent bg-clip-text">
                   Complaint Dashboard
                 </h1>
-                <p className="text-gray-400 mt-2">
+                <p className="text-gray-400 mt-2 text-sm sm:text-base">
                   Manage your complaints and track their resolution status
                 </p>
               </div>
@@ -239,10 +239,10 @@ const ComplaintDashboard = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 px-6 py-3 rounded-lg transition-colors"
+                className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 px-4 py-2 sm:px-6 sm:py-3 rounded-lg transition-colors w-full sm:w-auto text-sm sm:text-base font-medium"
               >
-                <Plus className="w-5 h-5" />
-                New Complaint
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>New Complaint</span>
               </motion.button>
             </div>
           </motion.div>
@@ -252,22 +252,22 @@ const ComplaintDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mb-6 flex flex-col sm:flex-row gap-4"
+            className="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4"
           >
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
               <input
                 type="text"
                 placeholder="Search complaints..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors text-sm sm:text-base"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors"
+              className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 transition-colors text-sm sm:text-base min-w-[140px]"
             >
               <option value="all">All Status</option>
               <option value="unsolved">Unsolved</option>
@@ -296,16 +296,16 @@ const ComplaintDashboard = () => {
               </p>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredComplaints.map((complaint, index) => (
                 <motion.div
                   key={complaint.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-emerald-500/50 transition-colors"
+                  className="bg-gray-800 border border-gray-700 rounded-lg p-4 sm:p-6 hover:border-emerald-500/50 transition-colors"
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
                     <div className="flex items-center gap-2">
                       {getStatusIcon(complaint.status || 'unsolved')}
                       <span
@@ -316,37 +316,37 @@ const ComplaintDashboard = () => {
                         {complaint.status || 'unsolved'}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2">
                       <button
                         onClick={() => handleViewComplaint(complaint)}
-                        className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
+                        className="p-1.5 sm:p-2 text-gray-400 hover:text-blue-400 transition-colors"
                         title="View Details"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => handleEditComplaint(complaint)}
-                        className="p-2 text-gray-400 hover:text-emerald-400 transition-colors"
+                        className="p-1.5 sm:p-2 text-gray-400 hover:text-emerald-400 transition-colors"
                         title="Edit"
                       >
-                        <Edit3 className="w-4 h-4" />
+                        <Edit3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteComplaint(complaint.id!)}
-                        className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                        className="p-1.5 sm:p-2 text-gray-400 hover:text-red-400 transition-colors"
                         title="Delete"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-semibold mb-2 line-clamp-2">{complaint.title}</h3>
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-3">{complaint.desc}</p>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-400 font-medium">{complaint.feature_name}</span>
+                  <h3 className="text-base sm:text-lg font-semibold mb-2 line-clamp-2">{complaint.title}</h3>
+                  <p className="text-gray-400 text-xs sm:text-sm mb-3 line-clamp-3">{complaint.desc}</p>
+                  <div className="flex items-center justify-between text-xs sm:text-sm">
+                    <span className="text-emerald-400 font-medium truncate pr-2">{complaint.feature_name}</span>
                     {complaint.created_at && (
-                      <span className="text-gray-500">
+                      <span className="text-gray-500 shrink-0">
                         {new Date(complaint.created_at).toLocaleDateString()}
                       </span>
                     )}

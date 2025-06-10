@@ -87,6 +87,14 @@ export function ResumeEditor({
   const [isSaving, setIsSaving] = useState(false)
   const [isLoadingSavedResumes, setIsLoadingSavedResumes] = useState(false)
   
+  // New states for AI project and skills generation
+  const [showProjectGenDialog, setShowProjectGenDialog] = useState(false)
+  const [showSkillsGenDialog, setShowSkillsGenDialog] = useState(false)
+  const [projectGenJobDesc, setProjectGenJobDesc] = useState('')
+  const [skillsGenJobDesc, setSkillsGenJobDesc] = useState('')
+  const [isGeneratingProject, setIsGeneratingProject] = useState(false)
+  const [isGeneratingSkills, setIsGeneratingSkills] = useState(false)
+  
   const improveExperience = async (jobDescription: string) => {
     const client = new Client({
       apiKey: process.env.NEXT_PUBLIC_LANGCHAIN_API_KEY,
@@ -410,6 +418,18 @@ export function ResumeEditor({
     })
   }
 
+  const removeProject = (projIndex: number) => {
+    if (!editedResume || !editedResume.projects) return
+    
+    const updatedProjects = [...editedResume.projects]
+    updatedProjects.splice(projIndex, 1)
+    
+    setEditedResume({
+      ...editedResume,
+      projects: updatedProjects
+    })
+  }
+
   // Add new item functions
   const addNewExperience = () => {
     if (!editedResume) return
@@ -570,6 +590,111 @@ export function ResumeEditor({
       ...editedResume,
       skills: updatedSkills
     })
+  }
+
+  // AI-powered project generation
+  const handleGenerateProject = async (jobDescription: string) => {
+    try {
+      setIsGeneratingProject(true)
+      
+      const client = new Client({ 
+        apiUrl: process.env.NEXT_PUBLIC_LANGCHAIN_URI, 
+        apiKey: process.env.NEXT_PUBLIC_LANGCHAIN_API_KEY 
+      })
+      
+      const response = await client.runs.wait(
+        null,
+        "project_gen",
+        {
+          input: {
+            job_desc: jobDescription
+          }
+        }
+      )
+
+      const responseData = response as any
+      if (responseData.project) {
+        const newProject = {
+          name: responseData.project.name,
+          roles: responseData.project.roles
+        }
+        
+        setEditedResume({
+          ...editedResume,
+          projects: [...(editedResume.projects || []), newProject]
+        })
+        
+        toast({
+          title: "Success",
+          description: "AI-generated project added successfully",
+        })
+      }
+      
+      setShowProjectGenDialog(false)
+      setProjectGenJobDesc('')
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate project. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsGeneratingProject(false)
+    }
+  }
+
+  // AI-powered skills generation
+  const handleGenerateSkills = async (jobDescription: string) => {
+    try {
+      setIsGeneratingSkills(true)
+      
+      const client = new Client({ 
+        apiUrl: process.env.NEXT_PUBLIC_LANGCHAIN_URI, 
+        apiKey: process.env.NEXT_PUBLIC_LANGCHAIN_API_KEY 
+      })
+      
+      const response = await client.runs.wait(
+        null,
+        "skills_gen",
+        {
+          input: {
+            job_desc: jobDescription
+          }
+        }
+      )
+
+      const responseData = response as any
+      if (responseData.skills) {
+        // Add new skills to existing ones, avoiding duplicates
+        const existingSkills = editedResume.skills || []
+        const newSkills = responseData.skills.filter((skill: string) => 
+          !existingSkills.some((existing: string) => 
+            existing.toLowerCase() === skill.toLowerCase()
+          )
+        )
+        
+        setEditedResume({
+          ...editedResume,
+          skills: [...existingSkills, ...newSkills]
+        })
+        
+        toast({
+          title: "Success",
+          description: `${newSkills.length} AI-generated skills added successfully`,
+        })
+      }
+      
+      setShowSkillsGenDialog(false)
+      setSkillsGenJobDesc('')
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate skills. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsGeneratingSkills(false)
+    }
   }
 
   return (
@@ -972,6 +1097,18 @@ export function ResumeEditor({
             toggleExpanded={() => toggleSection('skills')}
             addItem={addNewSkill}
           >
+            <div className="mb-4 flex justify-between items-center">
+              <span className="text-sm text-gray-400">Manage your technical and soft skills</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSkillsGenDialog(true)}
+                className="bg-purple-600 hover:bg-purple-700 text-white border-purple-600 hover:border-purple-700"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generate Skills with AI
+              </Button>
+            </div>
             {editedResume.skills?.map((skill, skillIndex) => (
               <div key={skillIndex} className="mb-2 flex items-center gap-2">
                 <Input
@@ -998,27 +1135,52 @@ export function ResumeEditor({
             toggleExpanded={() => toggleSection('projects')}
             addItem={addNewProject}
           >
+            <div className="mb-4 flex justify-between items-center">
+              <span className="text-sm text-gray-400">Showcase your projects and achievements</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowProjectGenDialog(true)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-600 hover:border-indigo-700"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generate Project with AI
+              </Button>
+            </div>
             {editedResume.projects?.map((project, projIndex) => (
               <div key={projIndex} className="mb-4 p-4 bg-gray-700 rounded-lg">
-                <div 
-                  className="mb-2 cursor-pointer"
-                  onClick={() => toggleSubsection('projects', projIndex)}
-                >
-                  <div className="flex justify-between items-center">
-                    <label className="block text-xs font-medium mb-1">Project Name</label>
-                    <div>
-                      {expandedSubsections.projects[projIndex] ? 
-                        <ChevronUp className="h-5 w-5" /> : 
-                        <ChevronDown className="h-5 w-5" />
-                      }
+                <div className="flex justify-between items-center mb-2">
+                  <div 
+                    className="flex-1 cursor-pointer"
+                    onClick={() => toggleSubsection('projects', projIndex)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <label className="block text-xs font-medium mb-1">Project Name</label>
+                      <div>
+                        {expandedSubsections.projects[projIndex] ? 
+                          <ChevronUp className="h-5 w-5" /> : 
+                          <ChevronDown className="h-5 w-5" />
+                        }
+                      </div>
                     </div>
+                    <Input
+                      value={project.name}
+                      onChange={(e) => updateProject(projIndex, 'name', e.target.value)}
+                      className="bg-gray-600 border-gray-500"
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </div>
-                  <Input
-                    value={project.name}
-                    onChange={(e) => updateProject(projIndex, 'name', e.target.value)}
-                    className="bg-gray-600 border-gray-500"
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  <div className="flex items-center gap-2 ml-4">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => removeProject(projIndex)}
+                      className="text-red-400 hover:text-red-300"
+                      title="Delete Project"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 {expandedSubsections.projects[projIndex] && (
                   <div>
@@ -1252,6 +1414,118 @@ export function ResumeEditor({
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowSavedResumesDialog(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Project Generation Dialog */}
+      <Dialog open={showProjectGenDialog} onOpenChange={setShowProjectGenDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Generate Project with AI</DialogTitle>
+            <DialogDescription>
+              Enter a job description to generate a tailored project for your resume.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Job Description
+              </label>
+              <Textarea
+                value={projectGenJobDesc}
+                onChange={(e) => setProjectGenJobDesc(e.target.value)}
+                placeholder="Paste the job description you're targeting..."
+                className="min-h-[200px] bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-indigo-500"
+                disabled={isGeneratingProject}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowProjectGenDialog(false)
+                setProjectGenJobDesc('')
+              }}
+              disabled={isGeneratingProject}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => handleGenerateProject(projectGenJobDesc)}
+              disabled={!projectGenJobDesc || isGeneratingProject}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white border-0 disabled:bg-gray-500 disabled:text-gray-300"
+            >
+              {isGeneratingProject ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating Project...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Project
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Skills Generation Dialog */}
+      <Dialog open={showSkillsGenDialog} onOpenChange={setShowSkillsGenDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Generate Skills with AI</DialogTitle>
+            <DialogDescription>
+              Enter a job description to generate relevant skills for your resume.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Job Description
+              </label>
+              <Textarea
+                value={skillsGenJobDesc}
+                onChange={(e) => setSkillsGenJobDesc(e.target.value)}
+                placeholder="Paste the job description you're targeting..."
+                className="min-h-[200px] bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-purple-500"
+                disabled={isGeneratingSkills}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowSkillsGenDialog(false)
+                setSkillsGenJobDesc('')
+              }}
+              disabled={isGeneratingSkills}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => handleGenerateSkills(skillsGenJobDesc)}
+              disabled={!skillsGenJobDesc || isGeneratingSkills}
+              className="bg-purple-600 hover:bg-purple-700 text-white border-0 disabled:bg-gray-500 disabled:text-gray-300"
+            >
+              {isGeneratingSkills ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating Skills...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Generate Skills
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

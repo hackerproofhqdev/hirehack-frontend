@@ -284,9 +284,9 @@ export default function Resume() {
       )}
 
       {parsedResume && editedResume && !loading && (
-        <div className="h-full grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
+        <div className="h-full flex flex-col lg:grid lg:grid-cols-2 gap-2 sm:gap-4 p-2 sm:p-4">
           {/* Editor Panel */}
-          <div className="h-full overflow-hidden bg-[#1A2332] border border-gray-700 rounded-lg">
+          <div className="h-1/2 lg:h-full overflow-hidden bg-[#1A2332] border border-gray-700 rounded-lg order-2 lg:order-1">
             <ResumeEditor
               editedResume={editedResume}
               setEditedResume={setEditedResume}
@@ -301,29 +301,31 @@ export default function Resume() {
           </div>
           
           {/* Preview Panel */}
-          <div className="h-full overflow-y-auto bg-[#1A2332] border border-gray-700 rounded-lg scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-emerald-500">
-            <div className="p-6">
-              <div className="sticky top-0 bg-[#1A2332] z-10 pb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-emerald-400">Live Preview</h3>
+          <div className="h-1/2 lg:h-full overflow-y-auto bg-[#1A2332] border border-gray-700 rounded-lg scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-emerald-500 order-1 lg:order-2">
+            <div className="p-3 sm:p-6">
+              <div className="sticky top-0 bg-[#1A2332] z-10 pb-3 sm:pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                <h3 className="text-base sm:text-lg font-semibold text-emerald-400">Live Preview</h3>
                 <button
                   onClick={handleDownloadPDF}
                   disabled={isDownloading}
-                  className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-600 disabled:opacity-50 text-white rounded-lg transition-all"
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-600 disabled:opacity-50 text-white rounded-lg transition-all text-sm sm:text-base w-full sm:w-auto justify-center"
                 >
                   {isDownloading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Downloading...
+                      <span className="hidden sm:inline">Downloading...</span>
+                      <span className="sm:hidden">Download...</span>
                     </>
                   ) : (
                     <>
                       <Download className="h-4 w-4" />
-                      Download PDF
+                      <span className="hidden sm:inline">Download PDF</span>
+                      <span className="sm:hidden">PDF</span>
                     </>
                   )}
                 </button>
               </div>
-              <div ref={resumePreviewRef} className="bg-white rounded-lg p-4">
+              <div ref={resumePreviewRef} className="bg-white rounded-lg p-2 sm:p-4">
                 <ResumeViewer
                   resume={editedResume}
                   selectedTemplate={selectedTemplate}
