@@ -187,15 +187,15 @@ export default function UserProfilePage() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-gray-300">Plan Type</span>
                       <span className="font-semibold text-white capitalize">
-                        {user.plain_period === 'monthly' ? 'Monthly Premium' : 'Yearly Premium'}
+                        {user.plain_period === 'month' ? 'Monthly Premium' : 'Yearly Premium'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-gray-300">Amount</span>
                       <span className="text-2xl font-bold text-emerald-400">
-                        ${user.plain_period === 'monthly' ? '9.00' : '97.00'}
+                        ${user.plain_period === 'month' ? '9.00' : '97.00'}
                         <span className="text-sm text-gray-400 ml-1">
-                          {user.plain_period === 'monthly' ? '/month' : '/year'}
+                          {user.plain_period === 'month' ? '/month' : '/year'}
                         </span>
                       </span>
                     </div>
@@ -209,7 +209,7 @@ export default function UserProfilePage() {
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300">Next Billing</span>
                       <span className="text-white">
-                        {new Date(Date.now() + (user.plain_period === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                        {new Date(Date.now() + (user.plain_period === 'month' ? 30 : 365) * 24 * 60 * 60 * 1000).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
@@ -224,8 +224,8 @@ export default function UserProfilePage() {
                       <div>
                         <p className="text-white font-medium mb-1">Automatic Billing</p>
                         <p className="text-gray-400 text-sm">
-                          Your subscription will automatically renew every {user.plain_period === 'monthly' ? 'month' : 'year'} 
-                          for ${user.plain_period === 'monthly' ? '9.00' : '97.00'}.
+                          Your subscription will automatically renew every {user.plain_period === 'month' ? 'month' : 'year'} 
+                          for ${user.plain_period === 'month' ? '9.00' : '97.00'}.
                         </p>
                       </div>
                     </div>
@@ -257,15 +257,15 @@ export default function UserProfilePage() {
                   <div>
                     <h4 className="text-lg font-semibold text-emerald-400">Current Invoice</h4>
                     <p className="text-gray-400 text-sm">
-                      Next charge: {new Date(Date.now() + (user.plain_period === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                      Next charge: {new Date(Date.now() + (user.plain_period === 'month' ? 30 : 365) * 24 * 60 * 60 * 1000).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-3xl font-bold text-white">
-                      ${user.plain_period === 'monthly' ? '9.00' : '97.00'}
+                      ${user.plain_period === 'month' ? '9.00' : '97.00'}
                     </p>
                     <p className="text-emerald-400 text-sm">
-                      Auto-renewal {user.plain_period === 'monthly' ? 'monthly' : 'yearly'}
+                      Auto-renewal {user.plain_period === 'month' ? 'monthly' : 'yearly'}
                     </p>
                   </div>
                 </div>
