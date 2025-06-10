@@ -1,7 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { logout } from '@/actions/logout';
 
 const Navbar = ({ text }:{text:string}) => {
@@ -21,7 +22,14 @@ const Navbar = ({ text }:{text:string}) => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Title Section */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Brain className="w-8 h-8 text-emerald-400" />
+              <span className="text-xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-transparent bg-clip-text">
+                HireHack
+              </span>
+            </Link>
+            <div className="h-6 w-px bg-gray-600"></div>
             <h1 className="text-lg font-semibold text-white">{text}</h1>
           </div>
 
@@ -32,6 +40,30 @@ const Navbar = ({ text }:{text:string}) => {
               className="text-gray-300 hover:text-white transition-colors"
             >
               Dashboard
+            </button>
+            <button
+              onClick={() => router.push('/dashboard/resumeAnalysis')}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Resume Analyzer
+            </button>
+            <button
+              onClick={() => router.push('/dashboard/jobSearch')}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Job Search
+            </button>
+            <button
+              onClick={() => router.push('/dashboard/interviewprep')}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Interview Prep
+            </button>
+            <button
+              onClick={() => router.push('/dashboard/quiz')}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Quiz Generation
             </button>
             <button
               onClick={() => router.push('/dashboard/saveResume')}
