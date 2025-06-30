@@ -80,6 +80,7 @@ export function ResumeEditor({
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
   const [showImproveExpDialog, setShowImproveExpDialog] = useState(false)
   const [improveExpJobDesc, setImproveExpJobDesc] = useState('')
+  const [improveExpJobTitle, setImproveExpJobTitle] = useState('')
   const [currentExpIndex, setCurrentExpIndex] = useState<number | null>(null)
   const [isImprovingExp, setIsImprovingExp] = useState(false)
   const [showSavedResumesDialog, setShowSavedResumesDialog] = useState(false)
@@ -226,7 +227,7 @@ export function ResumeEditor({
   }
 
   const handleImproveExperience = async () => {
-    if (!improveExpJobDesc || currentExpIndex === null) return
+    if (!improveExpJobDesc || !improveExpJobTitle || currentExpIndex === null) return
     
     try {
       setIsImprovingExp(true)
@@ -236,10 +237,11 @@ export function ResumeEditor({
         const updatedExperiences = [...editedResume.experiences]
         const currentExp = updatedExperiences[currentExpIndex]
         
-        // Add the new responsibilities to existing bulletin points
+        // Update job title and replace bulletin points with AI-generated ones
         updatedExperiences[currentExpIndex] = {
           ...currentExp,
-          bulletin: [...currentExp.bulletin, ...responsibilities]
+          role: improveExpJobTitle.trim(), // Update job title (now required)
+          bulletin: responsibilities // Replace previous bullet points with new ones
         }
         
         setEditedResume({
@@ -249,12 +251,13 @@ export function ResumeEditor({
         
         toast({
           title: "Success",
-          description: "Experience improved with AI-generated responsibilities",
+          description: "Experience improved with AI-generated responsibilities and updated job title",
         })
       }
       
       setShowImproveExpDialog(false)
       setImproveExpJobDesc('')
+      setImproveExpJobTitle('')
       setCurrentExpIndex(null)
     } catch (error) {
       toast({
@@ -269,6 +272,8 @@ export function ResumeEditor({
 
   const openImproveExpDialog = (expIndex: number) => {
     setCurrentExpIndex(expIndex)
+    setImproveExpJobTitle('') // Reset job title field
+    setImproveExpJobDesc('') // Reset job description field
     setShowImproveExpDialog(true)
   }
 
@@ -1274,23 +1279,35 @@ export function ResumeEditor({
       </Dialog>
 
       <Dialog open={showImproveExpDialog} onOpenChange={setShowImproveExpDialog}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-white">
           <DialogHeader>
-            <DialogTitle>Improve Experience with AI</DialogTitle>
-            <DialogDescription>
-              Enter the job description to generate tailored responsibilities for this experience.
+            <DialogTitle className="text-white">Improve Experience with AI</DialogTitle>
+            <DialogDescription className="text-gray-300">
+              Enter the job title and job description to generate tailored responsibilities for this experience.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-sm font-medium mb-2 text-white">
+                Job Title
+              </label>
+              <Input
+                value={improveExpJobTitle}
+                onChange={(e) => setImproveExpJobTitle(e.target.value)}
+                placeholder="Enter the job title you're targeting..."
+                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-emerald-500"
+                disabled={isImprovingExp}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-white">
                 Job Description
               </label>
               <Textarea
                 value={improveExpJobDesc}
                 onChange={(e) => setImproveExpJobDesc(e.target.value)}
                 placeholder="Paste the job description you're targeting..."
-                className="min-h-[200px]"
+                className="min-h-[200px] bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-emerald-500"
                 disabled={isImprovingExp}
               />
             </div>
@@ -1301,16 +1318,18 @@ export function ResumeEditor({
               onClick={() => {
                 setShowImproveExpDialog(false)
                 setImproveExpJobDesc('')
+                setImproveExpJobTitle('')
                 setCurrentExpIndex(null)
               }}
               disabled={isImprovingExp}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
             >
               Cancel
             </Button>
             <Button
               onClick={handleImproveExperience}
-              disabled={!improveExpJobDesc || isImprovingExp}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              disabled={!improveExpJobDesc || !improveExpJobTitle || isImprovingExp}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white border-0 disabled:bg-gray-500 disabled:text-gray-300"
             >
               {isImprovingExp ? (
                 <>
