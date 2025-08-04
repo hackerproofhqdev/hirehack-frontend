@@ -25,12 +25,7 @@ export default function AIResumeHeader() {
         >
           Resume Analyzer
         </Link>
-        <Link
-          href={"/dashboard/jobSearch"}
-          className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          Job Search
-        </Link>
+
         <Link
           href={"/dashboard/interviewprep"}
           className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
@@ -100,13 +95,7 @@ export default function AIResumeHeader() {
               >
                 Quiz Generation
               </Link>
-              <Link
-                href={"/dashboard/jobSearch"}
-                onClick={() => setIsNavOpen(false)}
-                className="px-2 py-1 hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                Job Search
-              </Link>
+
               <Link
                 href={"/dashboard/userProfile"}
                 onClick={() => setIsNavOpen(false)}

@@ -274,21 +274,13 @@ export default function UserProfilePage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
           <button
             onClick={() => router.push("/dashboard/saveResume")}
             className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all text-white text-lg font-medium"
           >
             <FileText className="w-5 h-5" />
             View Saved Resumes
-          </button>
-
-          <button
-            onClick={() => router.push("/dashboard/jobSearch")}
-            className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-500 to-violet-500 rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all text-white text-lg font-medium"
-          >
-            <Search className="w-5 h-5" />
-            Job Search
           </button>
 
           {user.subscription_id ? (

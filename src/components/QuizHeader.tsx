@@ -30,9 +30,7 @@ export default function QuizHeader({ onLogout }: QuizHeaderProps) {
         <Button variant="ghost" className="text-gray-300 hover:bg-gray-700/50" asChild>
           <Link href="/dashboard/resumeAnalysis">Resume Analyzer</Link>
         </Button>
-        <Button variant="ghost" className="text-gray-300 hover:bg-gray-700/50" asChild>
-          <Link href="/dashboard/jobSearch">Job Search</Link>
-        </Button>
+
         <Button variant="ghost" className="text-gray-300 hover:bg-gray-700/50" asChild>
           <Link href="/dashboard/interviewprep">Interview Prep</Link>
         </Button>

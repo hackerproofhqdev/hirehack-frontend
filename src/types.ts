@@ -69,26 +69,9 @@ export interface ResumeAIModel {
 }
 
 
-export interface SearchJobModel  {
-  job_title: string
-  skills_desc: string
-}
 
-export interface JobPosting {
-  company_name: string;
-  role: string;
-  working_exp: string | null;
-  type: string;
-  desc: string;
-  url_to_apply: string;
-  location: string;
-  salary_range: string | null;
-  application_deadline: string | null;
-  skills_required: string[];
-  benefits: string[];
-  contact_email: string | null;
-  employment_type: string;
-}
+
+
 
 export interface QuizModel {
   job_title?: string;
@@ -133,24 +116,9 @@ export interface IUser {
 
 
 
-export interface Job {
-  id: string
-  title: string
-  url: string
-  company: {
-    name: string
-    logo?: string
-  }
-  location: string
-  benefits?: string
-  postAt: string
-}
 
-export interface ApiResponse {
-  success: boolean
-  data: Job[]
-  total: number
-}
+
+
 
 export interface Experience {
   company_name: string;

@@ -131,13 +131,13 @@ export default function InterviewChat() {
     }
 
     if (!vapiRef.current) {
-      vapiRef.current = new Vapi("23e8327b-5913-4d2b-9207-33b78fa2ae99");
+      vapiRef.current = new Vapi("7d6a7dd7-4d46-4834-b51d-117aedb166b3");
     }
 
     setCallStatus(CALL_STATUS.CONNECTING);
     
     try {
-      await vapiRef.current.start("ba659daa-0743-472b-9797-44ceed2af144", {
+      await vapiRef.current.start("0950ef7a-a746-4dec-9461-7e011af51e1c", {
         variableValues: {
           role: jobRole,
           jobDescription: jobDesc,

@@ -27,12 +27,7 @@ const UserHome = () => {
       icon: <FileUp className="w-6 h-6" />,
       link: "/dashboard/resumeAnalysis/create",
     },
-    {
-      title: "Job Search",
-      description: "Discover opportunities perfectly matched to your skills and preferences",
-      icon: <Search className="w-6 h-6" />,
-      link: "/dashboard/jobSearch",
-    },
+
     {
       title: "Interview Prep",
       description: "Master your interview skills with AI-powered practice sessions",

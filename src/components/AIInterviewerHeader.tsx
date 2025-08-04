@@ -22,9 +22,7 @@ export default function AIInterviewerHeader({ isMenuOpen, setIsMenuOpen }: AIInt
             <Link href="/dashboard/resumeAnalysis" className="p-2 hover:bg-gray-700 rounded-lg transition-colors px-2 py-1">
               Resume Analyzer
             </Link>
-            <Link href="/dashboard/jobSearch" className="p-2 hover:bg-gray-700 rounded-lg transition-colors px-2 py-1">
-              Job Search
-            </Link>
+
             <Link href="/dashboard/quiz" className="p-2 hover:bg-gray-700 rounded-lg transition-colors px-2 py-1">
               Quiz Generation
             </Link>
@@ -62,13 +60,7 @@ export default function AIInterviewerHeader({ isMenuOpen, setIsMenuOpen }: AIInt
             >
               Resume Analyzer
             </Link>
-            <Link
-              href="/dashboard/jobSearch"
-              className="block px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Job Search
-            </Link>
+
             <Link
               href="/dashboard/quiz"
               className="block px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-colors"

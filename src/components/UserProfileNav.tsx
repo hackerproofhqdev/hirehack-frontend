@@ -47,12 +47,7 @@ const Navbar = ({ text }:{text:string}) => {
             >
               Resume Analyzer
             </button>
-            <button
-              onClick={() => router.push('/dashboard/jobSearch')}
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Job Search
-            </button>
+
             <button
               onClick={() => router.push('/dashboard/interviewprep')}
               className="text-gray-300 hover:text-white transition-colors"
